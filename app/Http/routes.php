@@ -15,7 +15,6 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+$app->get('/vouchers/{code}', 'VouchersController@get');
 
-$app->get('/test', function () {
-    return "terus";
-});
+$app->post('/vouchers', 'VouchersController@insert');
