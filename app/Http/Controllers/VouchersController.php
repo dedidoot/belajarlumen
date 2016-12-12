@@ -119,7 +119,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 
         $image->move($location, $filename);
 
-        return 'halo '.$location;
+        return 'berhasil masuk '.$filename;
       }else{
         return 'fak';
       }
