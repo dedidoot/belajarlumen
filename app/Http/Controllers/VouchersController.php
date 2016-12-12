@@ -4,11 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Vouchers;
 use Illuminate\Http\Request;
+use Intervention\Image\ImageManagerStatic as Image;
 
  class VouchersController extends Controller{
 
-    public function get($code, Vouchers $vouchers){
+    public function getByCodeVoucher($code, Vouchers $vouchers){
       $vouchers = $vouchers->getDataVoucherByCode($vouchers, $code)->first();
+
+      if(!$vouchers){
+         abort(404);
+      }
+
+      return $vouchers;
+    }
+
+    public function getAll(Vouchers $vouchers){
+      $vouchers = $vouchers->getDataVoucherAll($vouchers);
 
       if(!$vouchers){
          abort(404);
@@ -43,6 +54,73 @@ use Illuminate\Http\Request;
         }else{
            return view('404');
         }
+
+    }
+
+    public function update(Request $request, Vouchers $vouchers){
+        $code = $request->input('code');
+        $balance = $request->input('balance');
+
+        $vouchers = $vouchers->getDataVoucherByCode($vouchers, $code);
+        $vouchers = $vouchers->update(['balance' => $balance]);
+
+        if(!$vouchers){
+            return view('404');
+        }else{
+           $response  = [
+              'status' => 200,
+              'message' => 'data voucher updated'
+           ];
+
+           return view('success',  $response);
+        }
+
+    }
+
+    public function delete(Request $request, Vouchers $vouchers){
+
+        $code = $request->input('code');
+        $vouchers = $vouchers->getDataVoucherByCode($vouchers, $code);
+        $vouchers = $vouchers->delete();
+
+        if(!$vouchers){
+            return view('404');
+        }else{
+           $response  = [
+              'status' => 200,
+              'message' => 'data voucher code '.$code.' has been deleted'
+           ];
+
+           return view('success',  $response);
+        }
+    }
+
+    public function uploadImage(Request $request){
+        // open an image file
+      //  $img = Image::make('public/foo.jpg');
+
+        // now you are able to resize the instance
+        //$img->resize(320, 240);
+
+        // and insert a watermark for example
+      //  $img->insert('public/watermark.png');
+
+        // finally we save the image as a new file
+      //  $img->save('public/bar.jpg');
+
+      if($request->hasFile('image')){
+        $image = $request->file('image');
+        $filename = time(). "." .$image->getClientOriginalExtension();
+        $location = url('images/'. $filename);
+
+        //dd(is_writable($location . $filename));
+
+        Image::make($image)->resize(200,200)->save($location);
+
+        return 'halo '.$location;
+      }else{
+        return 'fak';
+      }
 
     }
 

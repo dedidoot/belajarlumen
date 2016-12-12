@@ -14,6 +14,10 @@ class Vouchers extends Model{
     return $query->where('code', $code);
   }
 
+  public function getDataVoucherAll($query){
+    return $query->all();
+  } 
+
 
 
 }
