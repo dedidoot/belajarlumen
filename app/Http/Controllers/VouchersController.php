@@ -111,11 +111,13 @@ use Intervention\Image\ImageManagerStatic as Image;
       if($request->hasFile('image')){
         $image = $request->file('image');
         $filename = time(). "." .$image->getClientOriginalExtension();
-        $location = url('images/'. $filename);
+        $location = 'images/';
 
         //dd(is_writable($location . $filename));
 
-        Image::make($image)->resize(200,200)->save($location);
+        //Image::make($image)->resize(200,200)->save($location);
+
+        $image->move($location, $filename);
 
         return 'halo '.$location;
       }else{
